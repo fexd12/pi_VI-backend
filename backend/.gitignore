@@ -1,0 +1,6 @@
+venv
+dist
+pi_vi_backend.egg-info
+build
+__pycache__
+migrations
