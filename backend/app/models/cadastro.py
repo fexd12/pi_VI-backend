@@ -16,3 +16,11 @@ class Cadastro(db.Model):
     
     def check(self,passwd):
         return check_passwd(passwd,self.senha)
+
+    def to_dict(self):
+        data = {
+            'id_cadastro':self.id_cadastro,
+            'usuario':self.usuario,
+            'senha':self.senha
+        }
+        return data
