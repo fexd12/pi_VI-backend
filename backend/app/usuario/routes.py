@@ -8,23 +8,16 @@ from app.models import Usuario,Cadastro
 @bp.route('/', methods=['GET'])
 @check_token_dec
 def get_usuario():
-    # data = request.get_json()
 
-    # cadastro = Cadastro()
-    # cadastro.passwd(data['senha'])
-
-    # user = Usuario(nome=data['usuario'],tag=data['tag'],cadastro_usuario=[cadastro])
-
-    # db.session.add(user)
-    # db.session.add(cadastro)
-    # db.session.commit()
+    users = Usuario.query.all()
 
     message={
-        'message':'pass'
+        'items':[item.to_dict() for item in users]
     }
     return jsonify(message),200
 
 @bp.route('/',methods=['POST'])
+@cross_origin()
 @check_token_dec
 def new_user():
     data = request.get_json()

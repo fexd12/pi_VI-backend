@@ -42,6 +42,7 @@ def login():
     })
 
 @bp.route('/',methods=['GET'])
+@cross_origin()
 def check_login():
     token_header = request.headers.get('x-access-token')
     if token_header is None:
