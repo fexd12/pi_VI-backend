@@ -75,7 +75,60 @@ def new_user():
 
     return jsonify(message),200
 
-# @bp.route('/<int:id>/',methods=['POST'])
-# @cross_origin()
-# @check_token_dec
-# def reset
+@bp.route('/reset_password/',methods=['POST'])
+@cross_origin()
+@check_token_dec
+def reset_pass():
+    token = request.headers.get('x-access-token')
+    data = request.get_json()
+
+    if int(data.get('nova_senha')):
+        verify_token = decode_token(token)
+        user_id = verify_token['id_user']
+    else:
+        user_id = data['id_usuario']
+
+    try:
+        user = Usuario.query.filter_by(id_usuario=user_id).first()
+    except Exception as e:
+        return jsonify({
+            'message':'Não possui usuario com esse email'
+        }),403
+    
+    if int(data.get('nova_senha')):
+        try:
+            check_senha = Cadastro(senha=user.cadastro_usuario[0].senha)
+            if user is None or not check_senha.check(data['senha']):
+                return jsonify({
+                    'message':'usuario e/ou senha errado',
+                    'succes':0
+                }),403
+        except Exception as identifier:
+            return jsonify({
+                'message':'Senhas não coincidem'
+            }),403
+    
+    if data.get('senha_nova') and data.get('senha_confirma'):
+        if data['senha_nova'] != data['senha_confirma']:
+            return jsonify({
+                'message':'as senhas nao conferem'
+            }),403
+    
+    try:
+        new_cadastro = user.cadastro_usuario[0].to_dict()
+
+        cadastro = Cadastro()
+        cadastro.from_dict(new_cadastro)
+        
+        cadastro.passwd(data['senha_nova'])
+
+        user.cadastro_usuario[0].senha = cadastro.senha
+        db.session.commit()
+    except Exception as identifier:
+        return jsonify({
+            'message':'Não foi possivel alterar a sennha'
+        }),403
+
+    return jsonify({
+        'message':'senha alterada com sucesso'
+    }),200

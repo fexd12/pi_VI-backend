@@ -1,7 +1,5 @@
 from app import db
-from sqlalchemy_serializer import SerializerMixin
-
-class Funcao(db.Model, SerializerMixin):
+class Funcao(db.Model):
     __tablename__ = 'funcao'
     id_funcao = db.Column(db.Integer,primary_key=True)
     descricao = db.Column(db.Text)

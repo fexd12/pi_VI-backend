@@ -9,7 +9,7 @@ class Cadastro(db.Model):
     nullable=False,unique=True)
 
     def __repr__(self):
-        return "<Cadastro {}>".format(self.usuario)
+        return "<Cadastro {}>".format(self.usuario_id)
 
     def passwd(self,passwd):
         self.senha = generate_hash(passwd)
@@ -20,7 +20,12 @@ class Cadastro(db.Model):
     def to_dict(self):
         data = {
             'id_cadastro':self.id_cadastro,
-            'usuario':self.usuario,
+            'usuario_id':self.usuario_id,
             'senha':self.senha
         }
         return data
+
+    def from_dict(self,data):
+        for field in ['id_cadastro','usuario_id','senha']:
+            if field in data:
+                setattr(self,field,data[field])
