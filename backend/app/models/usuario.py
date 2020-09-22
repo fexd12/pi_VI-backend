@@ -1,8 +1,5 @@
-from flask_login import UserMixin
-from app import db,login
-
-
-class Usuario(UserMixin,db.Model):
+from app import db
+class Usuario(db.Model):
     __tablename__ = 'usuario'
     id_usuario = db.Column(db.Integer, primary_key = True)
     nome = db.Column(db.Text, nullable = False, unique=True)
@@ -17,9 +14,6 @@ class Usuario(UserMixin,db.Model):
 
     def __repr__(self):
         return "<Usuario {}>".format(self.nome)
-    
-    def get_id(self):
-        return self.id_usuario
     
     def to_dict(self):
         data = {
@@ -36,8 +30,3 @@ class Usuario(UserMixin,db.Model):
         for field in ['nome','email','tag','acesso_id','funcao_id']:
             if field in data:
                 setattr(self,field,data[field])
-
-
-@login.user_loader
-def load_user(id):
-    return Usuario.query.get(int(id))

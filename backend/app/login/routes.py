@@ -1,6 +1,5 @@
 from app.login import bp
 from app import cross_origin
-from flask_login import current_user,login_user
 from app.models import Usuario,Cadastro
 from flask import jsonify,request
 from app.authenticate import generate_token,check_token
@@ -9,11 +8,7 @@ from app.authenticate import generate_token,check_token
 @cross_origin()
 def login():
     data = request.get_json()
-    if current_user.is_authenticated:
-        return jsonify({
-            'message':'usuario {} já esta authenticado'.format(current_user.nome),
-            'succes':1
-        })
+
     if data['email'] and data['senha']:
         try:
             user = Usuario.query.filter_by(email=data['email']).first()
@@ -29,7 +24,7 @@ def login():
             })
         # login_user(user)
         # print(str(user.nome))
-        token = generate_token(str(user.nome))
+        token = generate_token(user)
         return jsonify({
             'message':'usuario {} autenticado com sucesso '.format(str(user.nome)),
             'user': str(user.nome),

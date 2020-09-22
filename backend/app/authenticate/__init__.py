@@ -14,9 +14,13 @@ def check_passwd(passwd,hash_passwd):
     check = check_password_hash(hash_passwd,passwd)
     return check
 
+def decode_token(token):
+    return jwt.decode(token,current_app.config['SECRET_KEY'],algorithms='HS256',options={'verify_exp':True,'verify_iat':True})
+
 def generate_token(user,expiration_in = 7200):
     payload = {
-        'user':user,
+        'user':user.nome,
+        'id_user': user.id_usuario,
         'exp': time() + expiration_in,
         'iat': time()
     }
