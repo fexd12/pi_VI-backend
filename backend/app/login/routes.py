@@ -3,6 +3,7 @@ from app import cross_origin
 from app.models import Usuario,Cadastro
 from flask import jsonify,request
 from app.authenticate import generate_token,check_token
+from app.erros import bad_request
 
 @bp.route('/',methods=['POST'])
 @cross_origin()
@@ -13,15 +14,11 @@ def login():
         try:
             user = Usuario.query.filter_by(email=data['email']).first()
         except Exception as e:
-            return jsonify({
-                'message':'Não possui usuario com esse email'
-            }),403
+            return bad_request(403,'Não possui usuario com esse email')
         check_senha = Cadastro(senha=user.cadastro_usuario[0].senha)
         if user is None or not check_senha.check(data['senha']):
-            return jsonify({
-                'message':'usuario e/ou senha errado',
-                'succes':0
-            })
+
+            return bad_request(403,'usuario e/ou senha errado')
         # login_user(user)
         # print(str(user.nome))
         token = generate_token(user)
@@ -31,10 +28,7 @@ def login():
             'success':1,
             'token':token
         })
-    return jsonify({
-        'message':'não foi informado credenciais para login',
-        'success':0
-    })
+    return bad_request(403,'não foi informado credenciais para login')
 
 @bp.route('/',methods=['GET'])
 @cross_origin()

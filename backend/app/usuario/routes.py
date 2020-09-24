@@ -10,39 +10,90 @@ import json
 @check_token_dec
 def get_usuario():
 
-    users = Usuario.query.all()
+    users = Usuario.query.filter(Usuario.ativo == 'S').all()
 
     message={
         'items':[item.to_dict() for item in users]
     }
     return jsonify(message),200
+    pass
+
+@bp.route('/deletar/',methods=['PUT'])
+@cross_origin()
+@check_token_dec
+def delet_user():
+    try:
+        # token = request.headers.get('x-access-token')
+
+        # verify_token = decode_token(token)
+        # user_id = verify_token['id_user']
+        user_id  = request.get_json()
+
+        user = Usuario.query.filter_by(id_usuario=user_id['id_usuario']).first()
+        user.ativo = 'N'
+        
+        db.session.commit()
+
+        message = {
+            'message':'usuario deletado'
+        }
+
+        return jsonify(message),200
+    except Exception as e:
+        return bad_request(403,'erro ao deletar usuario')
+
+@bp.route('/editar/',methods=['PUT'])
+@cross_origin()
+@check_token_dec
+def edit_user():
+    try:
+        data = request.get_json()
+
+        user = Usuario.query.filter_by(id_usuario=data['id_usuario']).first()
+
+        user.from_dict(data)
+
+        db.session.commit()
+
+        message = {
+            'message':'usuario alterado'
+        }
+
+        return jsonify(message),200
+
+    except Exception as identifier:
+        return bad_request(403,'erro ao editar usuario')
 
 @bp.route('/token/', methods=['GET'])
 @check_token_dec
 def get_usuario_token():
-    token = request.headers.get('x-access-token')
 
-    verify_token = decode_token(token)
-    user_id = verify_token['id_user']
+    try:
+        token = request.headers.get('x-access-token')
 
-    # users = Usuario.query.filter_by(id_usuario = user_id)
+        verify_token = decode_token(token)
+        user_id = verify_token['id_user']
 
-    users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
+        # users = Usuario.query.filter_by(id_usuario = user_id)
+
+        users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
         .join(Acesso,Usuario.acesso_id == Acesso.id_acesso)\
         .add_columns(Usuario.id_usuario,Usuario.nome,Usuario.tag,Funcao.descricao,Acesso.descricao,Usuario.email)\
         .filter(Usuario.id_usuario == user_id)\
         .first()
     
-    response = {
-        'id_usuario':users[1],
-        'nome':users[2],
-        'tag':users[3],
-        'funcao':users[4],
-        'acesso':users[5],
-        'email':users[6]
-    }
+        response = {
+            'id_usuario':users[1],
+            'nome':users[2],
+            'tag':users[3],
+            'funcao':users[4],
+            'acesso':users[5],
+            'email':users[6]
+        }
 
-    return response,200
+        return response,200
+    except Exception as e:
+        return bad_request(404,'Não foi possivel trazer as informações')
 
 @bp.route('/',methods=['POST'])
 @cross_origin()
@@ -56,6 +107,8 @@ def new_user():
         return bad_request('Use um outro nome')
     if Usuario.query.filter_by(email=data['email']).first():
         return bad_request('Use um outro email')
+
+    data['ativo'] = 'S'
     
     usuario = Usuario()
     usuario.from_dict(data)
@@ -91,9 +144,7 @@ def reset_pass():
     try:
         user = Usuario.query.filter_by(id_usuario=user_id).first()
     except Exception as e:
-        return jsonify({
-            'message':'Não possui usuario com esse email'
-        }),403
+        return bad_request(403,'Não possui usuario com esse email')
     
     if int(data.get('nova_senha')):
         try:
@@ -104,15 +155,11 @@ def reset_pass():
                     'succes':0
                 }),403
         except Exception as identifier:
-            return jsonify({
-                'message':'Senhas não coincidem'
-            }),403
+            return bad_request(403,'Senhas não coincidem')
     
     if data.get('senha_nova') and data.get('senha_confirma'):
         if data['senha_nova'] != data['senha_confirma']:
-            return jsonify({
-                'message':'as senhas nao conferem'
-            }),403
+            return bad_request(403,'Senhas não conferem')
     
     try:
         new_cadastro = user.cadastro_usuario[0].to_dict()
@@ -125,9 +172,7 @@ def reset_pass():
         user.cadastro_usuario[0].senha = cadastro.senha
         db.session.commit()
     except Exception as identifier:
-        return jsonify({
-            'message':'Não foi possivel alterar a sennha'
-        }),403
+        return bad_request(403,'Não foi possivel alterar a sennha')
 
     return jsonify({
         'message':'senha alterada com sucesso'
