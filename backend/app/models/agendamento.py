@@ -6,6 +6,7 @@ class Agendamento(db.Model):
     data = db.Column(db.DateTime)
     horario_inicio = db.Column(db.DateTime)
     horario_final = db.Column(db.DateTime)
+
     sala_id = db.Column(db.Integer, db.ForeignKey('salas.id_sala'),
         nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'),

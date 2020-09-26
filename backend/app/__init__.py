@@ -21,6 +21,9 @@ def create_app(config_class = Config):
 
     from app.login import bp as login_bp
     app.register_blueprint(login_bp,url_prefix='/login')
+    
+    from app.salas import bp as salas_bp
+    app.register_blueprint(salas_bp,url_prefix='/salas')
 
     return app
 
