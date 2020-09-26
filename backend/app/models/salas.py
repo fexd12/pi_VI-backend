@@ -17,3 +17,11 @@ class Salas(db.Model):
         for field in ['numero','quantidade','sala_tipo_id']:
             if field in data:
                 setattr(self,field,data[field])
+
+    def to_dict(self):
+        data = {
+            'id_sala': self.id_sala,
+            'numero': self.numero,
+            'quantidade': self.quantidade
+        }
+        return data
