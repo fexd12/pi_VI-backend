@@ -28,6 +28,9 @@ def create_app(config_class = Config):
     from app.api.tag import bp as tag_bp
     app.register_blueprint(tag_bp,url_prefix='/tag')
 
+    from app.api.email import bp as email_bp
+    app.register_blueprint(email_bp,url_prefix='/email')
+
     return app
 
 import app.models

@@ -12,4 +12,5 @@ class Config(object):
     MAIL_PORT = int(os.environ.get('MAIL_PORT'))
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS')
     MAIL_USERNAME =  os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') 
+    REDIS_URL = os.environ.get('REDIS_URL') 
