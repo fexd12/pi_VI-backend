@@ -12,12 +12,14 @@ def send_mail(mail,msg):
         txt = msg.as_string()
         server.sendmail(current_app.config['MAIL_USERNAME'],mail,txt)
         server.quit()
-    except Exception as identifier:
-        return 
-
+    except Exception as e:
+        print(e)
 
 def queue(mail,msg):
-    redis_url = current_app.config['REDIS_URL']
-    with Connection(Redis.from_url(redis_url)):
-        q = Queue()
-        q.enqueue(send_mail,mail,msg)
+    try:
+        redis_url = current_app.config['REDIS_URL']
+        with Connection(Redis.from_url(redis_url)):
+            q = Queue()
+            q.enqueue(send_mail,mail,msg)
+    except Exception as e:
+        print(e)
