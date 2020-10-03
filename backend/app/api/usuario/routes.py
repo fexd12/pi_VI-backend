@@ -1,4 +1,4 @@
-from app.usuario import bp
+from . import bp
 from app.erros import bad_request
 from app import cross_origin,db
 from flask import jsonify,request
@@ -16,7 +16,6 @@ def get_usuario():
         'items':[item.to_dict() for item in users]
     }
     return jsonify(message),200
-    pass
 
 @bp.route('/deletar/',methods=['PUT'])
 @cross_origin()

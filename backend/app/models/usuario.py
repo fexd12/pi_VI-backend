@@ -9,6 +9,7 @@ class Usuario(db.Model):
 
     funcao_id = db.Column(db.Integer, db.ForeignKey('funcao.id_funcao'))
     acesso_id = db.Column(db.Integer, db.ForeignKey('acesso.id_acesso'))
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id_tag'))
 
     agendamento_usuario = db.relationship('Agendamento', backref='agendamento_usuario', lazy=True)
     cadastro_usuario = db.relationship('Cadastro', backref='cadastro_usuario', lazy=True)

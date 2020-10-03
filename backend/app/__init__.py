@@ -16,14 +16,17 @@ def create_app(config_class = Config):
     db.init_app(app)
     migrate.init_app(app,db)
 
-    from app.usuario import bp as usuario_bp
+    from app.api.usuario import bp as usuario_bp
     app.register_blueprint(usuario_bp,url_prefix='/usuario')
 
-    from app.login import bp as login_bp
+    from app.api.login import bp as login_bp
     app.register_blueprint(login_bp,url_prefix='/login')
     
-    from app.salas import bp as salas_bp
+    from app.api.salas import bp as salas_bp
     app.register_blueprint(salas_bp,url_prefix='/salas')
+
+    from app.api.tag import bp as tag_bp
+    app.register_blueprint(tag_bp,url_prefix='/tag')
 
     return app
 

@@ -1,4 +1,4 @@
-from app.login import bp
+from . import bp
 from app import cross_origin
 from app.models import Usuario,Cadastro
 from flask import jsonify,request

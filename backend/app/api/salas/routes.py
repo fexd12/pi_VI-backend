@@ -1,8 +1,8 @@
-from app.salas import bp
+from . import bp
 
 from app.erros import bad_request
 from app import cross_origin,db
-from flask import jsonify,request
+from flask import jsonify,request,render_template
 from app.authenticate import check_token_dec,decode_token
 from app.models import Salas,SalasTipo
 import json
@@ -66,3 +66,7 @@ def new_sala():
     except Exception as identifier:
         print(identifier)
         return bad_request(403,'Nao foi possivel inserir sala')
+
+@bp.route('/teste/',methods=['GET'])
+def teste():
+    print(request.get_json())
