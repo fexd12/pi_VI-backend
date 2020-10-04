@@ -36,12 +36,14 @@ def enviar_email():
                 Pedimos por gentileza para trocar sua senha no seu primeiro acesso.
                 Ir na are de perfil para trocar sua senha
             """
-        d = m.Mail(data['email'],body,subject)
-        d.enviar()
-        queue.queue(d.email,d.msg)
-        # msg = Message(subject,sender=current_app.config['MAIL_USERNAME'],recipients=[data['email']])
-        # msg.body = body
-        # queue.send_mail_flask(msg)
+        # d = m.Mail(data['email'],body,subject)
+        # d.enviar()
+        # queue.queue(d.email,d.msg)
+
+        msg = Message(subject,sender=current_app.config['MAIL_USERNAME'],recipients=[data['email']])
+        msg.body = body
+        queue.thread_flask(msg)
+
         return jsonify({
             'message':'adsasda'
         }),200

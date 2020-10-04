@@ -26,5 +26,10 @@ def queue(mail,msg):
     except Exception as e:
         print(e)
 
-def send_mail_flask(msg):
-    mail.send(msg)
+def send_mail_flask(app,msg):
+    with app.app_context():
+        mail.send(msg)
+
+def thread_flask(msg):
+    
+    Thread(target=send_mail_flask,args= (current_app._get_current_object(),msg)).start()
