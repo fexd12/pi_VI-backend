@@ -5,10 +5,12 @@ from config import Config
 from flask_cors import CORS,cross_origin
 from redis import Redis
 import rq
+from flask_mail import Mail
 
 db = SQLAlchemy()
 migrate = Migrate()
 cors = CORS()
+mail = Mail()
 
 def create_app(config_class = Config):
     app = Flask(__name__)
@@ -20,6 +22,7 @@ def create_app(config_class = Config):
     cors.init_app(app)
     db.init_app(app)
     migrate.init_app(app,db)
+    mail.init_app(app)
 
     from app.api.usuario import bp as usuario_bp
     app.register_blueprint(usuario_bp,url_prefix='/usuario')
