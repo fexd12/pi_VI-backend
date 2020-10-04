@@ -17,6 +17,6 @@ class Tag(db.Model):
         return data
     
     def from_dict(self,data):
-        for field in ['tag','ativo']:
+        for field in ['id_tag','tag','ativo']:
             if field in data:
                 setattr(self,field,data[field])

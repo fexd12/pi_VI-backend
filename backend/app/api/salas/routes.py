@@ -21,10 +21,8 @@ def get_sala_tipo():
 
 @bp.route('/',methods=['GET'])
 @check_token_dec
-def get_usuario():
+def get_salas():
     try:
-        sala = Salas.query.all()
-
         users = Salas.query.join(SalasTipo,Salas.sala_tipo_id == SalasTipo.sala_tipo_id)\
         .add_columns(Salas.id_sala,Salas.numero,Salas.quantidade,SalasTipo.descricao)\
         .all()

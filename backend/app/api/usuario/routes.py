@@ -3,19 +3,43 @@ from app.erros import bad_request
 from app import cross_origin,db
 from flask import jsonify,request
 from app.authenticate import check_token_dec,decode_token
-from app.models import Usuario,Cadastro,Funcao,Acesso
+from app.models import Usuario,Cadastro,Funcao,Acesso,Tag
 import json
 
 @bp.route('/', methods=['GET'])
 @check_token_dec
 def get_usuario():
+    
+    try:
+        users = Usuario.query.join(Tag,Tag.id_tag == Usuario.tag_id) \
+            .join(Acesso,Acesso.id_acesso == Usuario.acesso_id) \
+            .join(Funcao,Funcao.id_funcao == Usuario.funcao_id) \
+            .filter(Usuario.ativo == 'S') \
+            .add_columns(Usuario.id_usuario,Usuario.nome,Usuario.email,Tag.tag,Tag.id_tag,Acesso.id_acesso,Acesso.descricao,Funcao.id_funcao,Funcao.descricao) \
+            .all()
+        
+        items= []
 
-    users = Usuario.query.filter(Usuario.ativo == 'S').all()
-
-    message={
-        'items':[item.to_dict() for item in users]
-    }
-    return jsonify(message),200
+        for row in users:
+            items.append({
+                'id_usuario':row[1],
+                'nome':row[2],
+                'email':row[3],
+                'tag':row[4],
+                'tag_id':row[5],
+                'acesso_id':row[6],
+                'acesso':row[7],
+                'funcao_id':row[8],
+                'funcao':row[9]
+            })
+            
+        message = {
+            'items':items
+        }
+        return jsonify(message),200
+    except Exception as e:
+        print(e)
+        return bad_request(403,'Não foi possivel trazer usuario')
 
 @bp.route('/deletar/',methods=['PUT'])
 @cross_origin()
@@ -29,6 +53,11 @@ def delet_user():
         user_id  = request.get_json()
 
         user = Usuario.query.filter_by(id_usuario=user_id['id_usuario']).first()
+
+        user_tag = Tag.query.filter_by(id_tag = user.tag_id).first()
+
+        user_tag.ativo = 'S'
+        user.tag_id = None
         user.ativo = 'N'
         
         db.session.commit()
@@ -50,7 +79,13 @@ def edit_user():
 
         user = Usuario.query.filter_by(id_usuario=data['id_usuario']).first()
 
+        tag = Tag.query.filter_by(id_tag=user.tag_id).first()
+        tag.ativo = 'S'
+
         user.from_dict(data)
+
+        tag_ativa = Tag.query.filter_by(id_tag=data['tag_id']).first()
+        tag_ativa.ativo = 'N'
 
         db.session.commit()
 
@@ -76,10 +111,11 @@ def get_usuario_token():
         # users = Usuario.query.filter_by(id_usuario = user_id)
 
         users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
-        .join(Acesso,Usuario.acesso_id == Acesso.id_acesso)\
-        .add_columns(Usuario.id_usuario,Usuario.nome,Usuario.tag,Funcao.descricao,Acesso.descricao,Usuario.email)\
-        .filter(Usuario.id_usuario == user_id)\
-        .first()
+            .join(Acesso,Usuario.acesso_id == Acesso.id_acesso)\
+            .join(Tag,Tag.id_tag == Usuario.tag_id)\
+            .add_columns(Usuario.id_usuario,Usuario.nome,Tag.tag,Funcao.descricao,Acesso.descricao,Usuario.email)\
+            .filter(Usuario.id_usuario == user_id)\
+            .first()
     
         response = {
             'id_usuario':users[1],
@@ -100,12 +136,12 @@ def get_usuario_token():
 def new_user():
     data = request.get_json()
 
-    if 'nome' not in data or 'email' not in data or 'senha' not in data or 'tag' not in data:
-        return bad_request('Precisa passar nome, email,senha e tag')
+    if 'nome' not in data or 'email' not in data or 'senha' not in data or 'tag_id' not in data:
+        return bad_request(403,'Precisa passar nome, email,senha e tag')
     if Usuario.query.filter_by(nome=data['nome']).first():
-        return bad_request('Use um outro nome')
+        return bad_request(403,'Use um outro nome')
     if Usuario.query.filter_by(email=data['email']).first():
-        return bad_request('Use um outro email')
+        return bad_request(403,'Use um outro email')
 
     data['ativo'] = 'S'
     

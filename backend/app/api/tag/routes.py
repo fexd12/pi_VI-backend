@@ -12,7 +12,6 @@ def get_tag():
     message ={
         'items': [item.to_dict() for item in tag]
     }
-    print(message)
 
     return jsonify(message),200
 
