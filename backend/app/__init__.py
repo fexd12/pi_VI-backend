@@ -39,6 +39,9 @@ def create_app(config_class = Config):
     from app.api.email import bp as email_bp
     app.register_blueprint(email_bp,url_prefix='/email')
 
+    from app.api.agendamento import bp as agendamento_bp
+    app.register_blueprint(agendamento_bp,url_prefix='/agendamento')
+
     return app
 
 import app.models
