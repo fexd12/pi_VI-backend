@@ -82,12 +82,12 @@ def teste():
                         t3.descricao as salas_tipo
                 from salas t1
                 join sala_tipo t3 on
-	                t1.sala_tipo_id = t3.sala_tipo_id 
+	                t1.sala_tipo_id = t3.sala_tipo_id
                 where not exists (select *
                     from agendamento t2
-                        where t1.id_sala = t2.sala_id and 
-                        (t2.data = :data) and (t2.horario_inicio between :horario_inicio and :horario_final) and 
-                        (t2.horario_final between :horario_inicio and :horario_final) ) and t1.sala_tipo_id=:sala_tipo_id
+                        where t1.id_sala = t2.sala_id and
+                        (t2.data = :data) and (t2.horario_inicio between :horario_inicio and :horario_final) and
+                        (t2.horario_final between :horario_inicio and :horario_final) ) and t1.sala_tipo_id = :sala_tipo_id
             """)
             
             result = conn.execute(query,data=dados['data'],horario_inicio = dados['horario_inicio'],horario_final=dados['horario_final'],sala_tipo_id=dados['sala_tipo_id']).fetchall()

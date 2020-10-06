@@ -5,6 +5,12 @@ from app.authenticate import check_token_dec,decode_token
 from app.models import Agendamento,Salas
 from app.erros import bad_request
 
+@bp.route('/',methods=['GET'])
+@cross_origin()
+@check_token_dec
+def get_agendamento():
+    pass
+
 @bp.route('/',methods=['POST'])
 @cross_origin()
 @check_token_dec
@@ -19,8 +25,6 @@ def set_agendamento():
 
         data['usuario_id'] = user_id
 
-        print(data)
-
         agend = Agendamento()
         agend.from_dict(data)
         db.session.add(agend)
@@ -29,5 +33,4 @@ def set_agendamento():
             'message': 'Agendamento realizado com sucesso'
         }),200
     except Exception as e:
-        print(e)
         return bad_request(403,'Erro ao inserir agendamento')
