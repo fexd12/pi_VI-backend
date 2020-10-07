@@ -12,6 +12,17 @@ class Agendamento(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'),
         nullable=False)
 
+    def to_dict(self):
+        data = {
+            'id_agendamento' :self.id_agendamento,
+            'data':str(self.data),
+            'horario_inicio':str(self.horario_inicio),
+            'horario_final': str(self.horario_final),
+            'sala_id': self.sala_id,
+            'usuario_id': self.usuario_id
+        }
+        return data
+
     def from_dict(self,data):
         for field in ['data','horario_inicio','horario_final','sala_id','usuario_id']:
             if field in data:
