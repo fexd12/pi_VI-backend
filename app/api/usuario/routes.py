@@ -113,7 +113,7 @@ def get_usuario_token():
         users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
             .join(Acesso,Usuario.acesso_id == Acesso.id_acesso)\
             .join(Tag,Tag.id_tag == Usuario.tag_id)\
-            .add_columns(Usuario.id_usuario,Usuario.nome,Tag.tag,Funcao.descricao,Acesso.descricao,Usuario.email)\
+            .add_columns(Usuario.id_usuario,Usuario.nome,Tag.tag,Funcao.descricao,Acesso.descricao,Usuario.email,Funcao.id_funcao)\
             .filter(Usuario.id_usuario == user_id)\
             .first()
     
@@ -123,7 +123,8 @@ def get_usuario_token():
             'tag':users[3],
             'funcao':users[4],
             'acesso':users[5],
-            'email':users[6]
+            'email':users[6],
+            'id_funcao':users[7]
         }
 
         return response,200
