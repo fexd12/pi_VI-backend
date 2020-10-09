@@ -6,11 +6,14 @@ COPY . .
 
 RUN python -m venv venv
 
-RUN pip install -e .
-RUN pip install gunicorn
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
-RUN chmod +x boot.sh
+RUN venv/bin/pip install -e .
+
+RUN venv/bin/pip install gunicorn
+
+RUN chmod +x ./boot.sh
 
 EXPOSE 2000
 
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["sh","boot.sh"]
