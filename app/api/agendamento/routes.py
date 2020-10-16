@@ -8,7 +8,6 @@ from app.models import SalasTipo as ST
 from app.erros import bad_request
 
 @bp.route('/',methods=['GET'])
-@cross_origin()
 @check_token_dec
 def get_agendamento():
     try:
