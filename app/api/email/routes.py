@@ -4,10 +4,12 @@ from . import queue
 from flask import jsonify,request,current_app
 from app.erros import bad_request
 from app import cross_origin
+from app.authenticate import check_token_dec
 from flask_mail import Message
 
 @bp.route('/',methods=['POST'])
 @cross_origin()
+@check_token_dec
 def enviar_email():
     try:
         data = request.get_json()
