@@ -46,7 +46,7 @@ def check_token_dec(f):
             return jsonify({
                 'message':'Nao foi possivel localizar o token',
                 'success':False
-            })
+            }),403
         # Remove the 'Basic" part from the token
         # auth_token = token_header.split(maxsplit=1)[1]
         # __url = "url_for_token_validation"
@@ -62,7 +62,7 @@ def check_token_dec(f):
             return jsonify({
                 'message': 'invalid Token',
                 'succes':0
-            })
+            }),403
         # return 
         #         jsonify("Invalid access as token invalid.")
             
