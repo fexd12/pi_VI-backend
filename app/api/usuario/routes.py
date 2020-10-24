@@ -213,3 +213,17 @@ def reset_pass():
     return jsonify({
         'message':'senha alterada com sucesso'
     }),200
+
+
+@bp.route('/limpeza', methods=['GET'])
+@check_token_dec
+def func_limpeza():
+    try:
+        
+        users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
+        .add_columns(Usuario.id_usuario)\
+        .filter(Funcao.descricao == "Administrador")\
+        .count()
+        return jsonify(users)
+    except Exception:
+        return bad_request(403,'Não foi possivel encontrar usuário')

@@ -111,3 +111,9 @@ def teste():
     except Exception as e:
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
+
+@bp.route('/disponivel',methods=['GET'])
+@check_token_dec
+def sala_disponivel():
+    agend = S.query.filter(S.ativo == S) \
+        .all()
