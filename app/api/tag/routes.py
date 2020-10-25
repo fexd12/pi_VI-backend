@@ -6,6 +6,7 @@ from flask import jsonify,request
 from app.erros import bad_request
 
 @bp.route('/',methods=['GET'])
+@check_token_dec
 def get_tag():
     tag = Tag.query.filter_by(ativo= 'S').all()
 
