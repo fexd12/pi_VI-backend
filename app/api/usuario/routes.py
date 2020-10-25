@@ -222,8 +222,29 @@ def func_limpeza():
         
         users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
         .add_columns(Usuario.id_usuario)\
-        .filter(Funcao.descricao == "Administrador")\
+        .filter(Funcao.descricao == "Limpeza")\
         .count()
-        return jsonify(users)
+
+        message = { 
+            'usuario': users
+        }
+
+        return jsonify(message),200
+
+    except Exception:
+        return bad_request(403,'Não foi possivel encontrar usuário')
+
+@bp.route('/all', methods=['GET'])
+@check_token_dec
+def func_all():
+    try:
+        
+        users = Usuario.query.count()
+
+        message = {
+            'usuarios' : users
+        }
+
+        return jsonify(message),200
     except Exception:
         return bad_request(403,'Não foi possivel encontrar usuário')
