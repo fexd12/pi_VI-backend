@@ -16,4 +16,4 @@ RUN chmod +x ./boot.sh
 
 EXPOSE 2000
 
-ENTRYPOINT ["sh","boot.sh"]
+ENTRYPOINT ["./boot.sh"]
