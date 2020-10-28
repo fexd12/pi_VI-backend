@@ -1,9 +1,9 @@
+from .form import Form
 from . import bp
-
 from app.erros import bad_request
 from app import cross_origin,db
-from flask import jsonify,request,render_template
-from app.authenticate import check_token_dec,decode_token
+from flask import jsonify,request,render_template,redirect
+from app.authenticate import check_token_dec
 from app.models import Salas,SalasTipo
 import json
 from sqlalchemy import text
@@ -117,3 +117,25 @@ def teste():
 def sala_disponivel():
     agend = S.query.filter(S.ativo == S) \
         .all()
+
+@bp.route('/feedback',methods=['GET','POST'])
+@cross_origin()
+def feedback():
+    form = Form()
+    if form.validate_on_submit():
+        #enviar resposta ao banco 
+        #request.form
+
+        return render_template('success.html') # tela para informar sucesso do cadastro
+        
+    return render_template('formulario.html',form=form),200
+
+# @bp.route('/teste_feedback',methods=['POST'])
+# @cross_origin()
+# def teste_feedback():
+#     # print('teste')
+#     name = request.form['projetor']
+#     # luzes = request.form['luzes']
+#     print(name)
+#     return jsonify('teste'),200 # tela para informar sucesso do cadastro
+    
