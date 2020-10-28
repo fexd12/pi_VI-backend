@@ -2,13 +2,17 @@
 <html lang="pt-br">
 
 <head>
-    <title>Formulário PI-VI</title>
     <meta charset="utf-8" />
+    <title>Formulário PI-VI</title>
+    <link rel="shortcut icon" type="imagem/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
 </head>
 
 <body>
+    <div class="img">
+        <img src="{{ url_for('static', filename='logo1.png') }}" alt="Logo">
+    </div>
     <form class="formulario" action="{{url_for('salas.feedback')}}" method="POST">
-        <p> Preencha essa fórmulario para informações da sala!</p>
+        <p> Preencha essa formulário para informações da sala!</p>
 
         <div class="field">
             <label for="Name">Seu Nome:</label>
@@ -21,34 +25,31 @@
         </div>
 
         <div class="field">
-            <label for="telefone">Nome da Sala:</label>
+            <label for="telefone">ID da Sala:</label>
             <input value="dasd220" type="text" id="telefone" name="telefone" disabled> </input>
         </div>
 
         <div class="field radiobox">
-            {{form.projetor.label}}
-            {{form.projetor}}
+            {{form.projetor.label}} {{form.projetor}}
 
         </div>
 
         <div class="field radiobox">
-            
-            {{ form.computador.label }}
-            {{ form.computador }}
+
+            {{ form.computador.label }} {{ form.computador }}
         </div>
 
         <div class="field radiobox">
-            {{ form.luzes.label }}
-            {{ form.luzes }}
+            {{ form.luzes.label }} {{ form.luzes }}
         </div>
 
         <div class="field radiobox">
-            {{ form.ar.label }}
-            {{ form.ar }}
+            {{ form.ar.label }} {{ form.ar }}
         </div>
 
         <input type="submit" value="Submit"></input>
     </form>
+
 </body>
 
 </html>
@@ -57,9 +58,8 @@
         font-family: Arial, Helvetica, sans-serif;
         width: 70vh;
         height: auto;
-        padding: 48px;
+        padding: 10px;
         margin: 15px auto;
-    
     }
     
     .formulario p {
@@ -127,12 +127,18 @@
         border-radius: 15px;
     }
     
-    body>.formulario {
+    body .formulario {
         background-color: #fff;
     }
     
     body {
         background-color: #74EBD5;
         background-image: linear-gradient(270deg, #74EBD5 0%, #9FACE6 100%);
+    }
+    
+    .img {
+        position: absolute;
+        width: 100px;
+        height: 100px;
     }
 </style>

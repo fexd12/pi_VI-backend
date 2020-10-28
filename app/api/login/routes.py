@@ -14,6 +14,7 @@ def login():
         try:
             user = Usuario.query.filter_by(email=data['email']).first()
         except Exception as e:
+            print(e)
             return bad_request(403,'Não possui usuario com esse email')
         check_senha = Cadastro(senha=user.cadastro_usuario[0].senha)
         if user is None or not check_senha.check(data['senha']):
