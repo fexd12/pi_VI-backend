@@ -25,9 +25,9 @@ def enviar_email():
             """
         elif data['cadastro'] == 0:
             subject = 'Feedback aula'
-            body = """
+            body = f"""
                 Segue link do Formulario para nos contar como estava a sala apos a aula
-                link: www.uol.com.br
+                link: localhost:2000/salas/feedback
             """
         elif data['cadastro'] == 2:
             subject = 'Alteração de senha'
