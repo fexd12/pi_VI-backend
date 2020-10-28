@@ -1,9 +1,138 @@
-    <h1>Sign In</h1>
-    <form action="" method="post" novalidate>
-        <p>
-            {{ form.username }}<br>
-        </p>
-        <p>
-            {{ form.password }}<br>
-        </p>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title>Formulário PI-VI</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <form class="formulario" action="{{url_for('salas.feedback')}}" method="POST">
+        <p> Preencha essa fórmulario para informações da sala!</p>
+
+        <div class="field">
+            <label for="Name">Seu Nome:</label>
+            <input value='felipe' type="text" id="Name" name="Name" disabled> </input>
+        </div>
+
+        <div class="field">
+            <label for="email">Seu E-Mail:</label>
+            <input value="teste" type="email" id="email" name="email" disabled> </input>
+        </div>
+
+        <div class="field">
+            <label for="telefone">Nome da Sala:</label>
+            <input value="dasd220" type="text" id="telefone" name="telefone" disabled> </input>
+        </div>
+
+        <div class="field radiobox">
+            {{form.projetor.label}}
+            {{form.projetor}}
+
+        </div>
+
+        <div class="field radiobox">
+            
+            {{ form.computador.label }}
+            {{ form.computador }}
+        </div>
+
+        <div class="field radiobox">
+            {{ form.luzes.label }}
+            {{ form.luzes }}
+        </div>
+
+        <div class="field radiobox">
+            {{ form.ar.label }}
+            {{ form.ar }}
+        </div>
+
+        <input type="submit" value="Submit"></input>
     </form>
+</body>
+
+</html>
+<style>
+    .formulario {
+        font-family: Arial, Helvetica, sans-serif;
+        width: 70vh;
+        height: auto;
+        padding: 48px;
+        margin: 15px auto;
+    
+    }
+    
+    .formulario p {
+        width: 100%;
+        font-size: 1.5em;
+    }
+    
+    .field {
+        width: 100%;
+        margin: 15px 0;
+    }
+    
+    .field label,
+    .field span {
+        padding-left: 10px;
+        font-size: 1.1em;
+        display: block;
+        width: 100%;
+    }
+    
+    .radiobox label {
+        width: auto;
+        display: inline-block;
+    }
+    
+    input[type=text],
+    input[type=email],
+    textarea {
+        width: 100%;
+        padding-left: 10px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 15px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+    
+    input#nao {
+        margin-left: 30px;
+    }
+    
+    input#ruim {
+        margin-left: 30px;
+    }
+    
+    textarea {
+        line-height: 20px;
+        padding: 1px;
+        height: 50px;
+        resize: none;
+    }
+    
+    input[type=submit] {
+        display: block;
+        background-color: #49C628;
+        border-color: #49C628;
+        color: #fff;
+        height: 35px;
+        border: none;
+        outline: 0;
+        cursor: pointer;
+        width: 100px;
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 15px;
+    }
+    
+    body>.formulario {
+        background-color: #fff;
+    }
+    
+    body {
+        background-color: #74EBD5;
+        background-image: linear-gradient(270deg, #74EBD5 0%, #9FACE6 100%);
+    }
+</style>
