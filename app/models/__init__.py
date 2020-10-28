@@ -6,3 +6,4 @@ from app.models.funcao import Funcao
 from app.models.acesso import Acesso
 from app.models.salas_tipo import SalasTipo
 from app.models.tag import Tag
+from app.models.salas_status import SalasStatus

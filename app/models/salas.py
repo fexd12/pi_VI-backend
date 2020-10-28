@@ -8,6 +8,8 @@ class Salas(db.Model):
     
     sala_tipo_id = db.Column(db.Integer, db.ForeignKey('sala_tipo.sala_tipo_id'))
 
+    sala_status = db.relationship('SalasStatus', backref='sala_status', lazy=True)
+
     agendamento_sala = db.relationship('Agendamento', backref='agendamento_sala', lazy=True)
     
     def __repr__(self):
