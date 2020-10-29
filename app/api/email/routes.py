@@ -44,8 +44,8 @@ def enviar_email():
 
         msg = Message(subject,sender=current_app.config['MAIL_USERNAME'],recipients=[data['email']])
         msg.body = body
-        # queue.thread_flask(msg)
-        queue.queue(data['email'],msg)
+        queue.thread_flask(msg)
+        # queue.queue(data['email'],msg)
 
         return jsonify({
             'message':'adsasda'

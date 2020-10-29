@@ -1,13 +1,8 @@
 from app.api.salas.routes import teste
 from flask import current_app
-from app import mail,app
+from app import mail
 import smtplib
 from threading import Thread
-import redis
-from rq import Queue
-
-redis_conn = redis.Redis(host='34.121.96.229',port='6379',password='',db=0)
-task_queue = Queue(connection=redis_conn)
 
 def send_mail(mail,msg):
     try:
@@ -19,21 +14,21 @@ def send_mail(mail,msg):
         server.sendmail(current_app.config['MAIL_USERNAME'],mail,txt)
         server.quit()
     except Exception as e:
-        print(e)
+        raise e
 
-# def thread_mail(mail,msg):
-#     Thread(target=send_mail,args= (mail,msg)).start()
+def thread_mail(mail,msg):
+    Thread(target=send_mail,args= (mail,msg)).start()
 
 def queue(mail,msg):
     try:
-        task_queue.enqueue(send_mail,mail,msg)
+        current_app.task_queue.enqueue(send_mail,mail,msg)
     except Exception as e:
-        print(e)
+        raise e 
 
 def send_mail_flask(app,msg):
     with app.app_context():
         mail.send(msg)
 
-# def thread_flask(msg):
+def thread_flask(msg):
     
-#     Thread(target=send_mail_flask,args= (current_app._get_current_object(),msg)).start()
+    Thread(target=send_mail_flask,args= (current_app._get_current_object(),msg)).start()
