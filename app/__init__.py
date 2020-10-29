@@ -16,8 +16,8 @@ def create_app(config_class = Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('pi_task',connection=app.redis)
+    # app.redis = Redis.from_url(app.config['REDIS_URL'])
+    # app.task_queue = rq.Queue('pi_task',connection=app.redis)
 
     cors.init_app(app)
     db.init_app(app)

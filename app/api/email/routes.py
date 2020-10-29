@@ -9,7 +9,7 @@ from flask_mail import Message
 
 @bp.route('/',methods=['POST'])
 @cross_origin()
-@check_token_dec
+# @check_token_dec
 def enviar_email():
     try:
         data = request.get_json()
@@ -44,7 +44,8 @@ def enviar_email():
 
         msg = Message(subject,sender=current_app.config['MAIL_USERNAME'],recipients=[data['email']])
         msg.body = body
-        queue.thread_flask(msg)
+        # queue.thread_flask(msg)
+        queue.queue(data['email'],msg)
 
         return jsonify({
             'message':'adsasda'
