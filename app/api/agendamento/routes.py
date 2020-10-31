@@ -7,20 +7,23 @@ from app.models import Salas as S
 from app.models import SalasTipo as ST
 from app.erros import bad_request
 
+from datetime import date
+
+dia = date.today()
+
 @bp.route('/',methods=['GET'])
 @check_token_dec
 def get_agendamento():
     try:
 
         token = request.headers.get('x-access-token')
-
         verify_token = decode_token(token)
         user_id = verify_token['id_user']
 
         agend = A.query.join(S,S.id_sala == A.sala_id ) \
             .join(ST,ST.sala_tipo_id == S.sala_tipo_id) \
             .add_columns(A.id_agendamento, A.data, A.horario_inicio, A.horario_final, S.id_sala, S.numero, ST.descricao) \
-            .filter(A.usuario_id == user_id) \
+            .filter(A.usuario_id == user_id,A.data == dia) \
             .all()
 
         items = []
