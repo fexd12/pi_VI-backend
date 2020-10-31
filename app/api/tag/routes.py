@@ -4,7 +4,7 @@ from app.models.usuario import Usuario
 from . import bp
 from app.authenticate import check_token_dec
 from app import cross_origin,db
-from app.models import Tag,Agendamento
+from app.models import Tag,Agendamento,Funcao
 from flask import jsonify,request
 from app.erros import bad_request
 import datetime
@@ -47,25 +47,45 @@ def agendamento(tag):
 
     data = datetime.datetime.today()
     hora  = str(data.hour) + ':' + str(data.minute) + ':' + '00'
+    hora_atual = datetime.time(hour=data.hour,minute=data.minute,second=0)
 
     data_atual = str(data.year) + '-' + str(data.month) + '-' + str(data.day)
 
     agendamento = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
         .join(Tag,Tag.id_tag == Usuario.tag_id)\
-        .add_columns(Agendamento.horario_inicio,Agendamento.horario_final)\
+        .join(Funcao,Funcao.id_funcao == Usuario.funcao_id) \
+        .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Funcao.descricao)\
         .filter(Tag.tag == tag,Agendamento.data == data_atual)\
         .all()
     
     items = []
 
     for row in agendamento:
-        horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1]) - datetime.timedelta(minutes=15)
-        if hora == horas_resultado.time():
+        horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1])
+        print(horas_resultado.time( ))
+        print(hora_atual)
 
-            items.append({
-                'horario_inicio': str(horas_resultado),
-                'horario_final': str(row[2]),
-            })
+        if row[3] == 1:
+            horas_delta = horas_resultado - datetime.timedelta(minutes=15)
+            if hora_atual == horas_delta.time() or hora_atual <= row[2]:
+                
+                items.append({
+                    'horario_inicio': str(horas_delta.time()),
+                    'horario_final': str(row[2]),
+                })
+
+        elif row[3] == 2:
+            horas_delta = horas_resultado - datetime.timedelta(minutes=20)
+            if hora_atual == horas_delta.time() or hora_atual <= row[1]:
+                
+                items.append({
+                    'horario_inicio': str(horas_delta.time()),
+                    'horario_final': str(row[2]),
+                })
+        
+        elif row[4] == 3:
+            pass
+
 
     print(items)
     message = {
