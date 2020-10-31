@@ -39,17 +39,19 @@ jobs:
     - run: |-
         gcloud --quiet auth configure-docker
         
-    - run: |-
-        docker build \
-          --tag "gcr.io/$PROJECT_ID/$IMAGE" \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" \
-          .
+#     - run: |-
+#         docker build \
+#           --tag "gcr.io/$PROJECT_ID/$IMAGE" \
+#           --build-arg GITHUB_SHA="$GITHUB_SHA" \
+#           --build-arg GITHUB_REF="$GITHUB_REF" \
+#           .
           
     
-    # helper for authentication
+#     # helper for authentication
+#     - run: |-
+#         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
     - run: |-
-        docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+        gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE .
 
     # Get the GKE credentials so we can deploy to the cluster
     - run: |-
