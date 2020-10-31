@@ -35,9 +35,12 @@ jobs:
         project_id: ${{ secrets.GCE_PROJECT }}
 
     # Configure Docker to use the gcloud command-line tool as a credential
+    - run: |-
+        gcloud --quiet auth configure-docker
+    
     # helper for authentication
     - run: |-
-        gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE .
+        gcloud builds submit --tag "gcr.io/$PROJECT_ID/$IMAGE" .
 
     # Get the GKE credentials so we can deploy to the cluster
     - run: |-
