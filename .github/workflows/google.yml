@@ -37,8 +37,8 @@ jobs:
     # Configure Docker to use the gcloud command-line tool as a credential
     # helper for authentication
     - run: |-
-        gcloud builds submit --tag gcr.io/"$PROJECT_ID"/"$IMAGE" .
+        gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE .
 
     # Get the GKE credentials so we can deploy to the cluster
     - run: |-
-        gcloud compute instances update-container "$GCE_CLUSTER" --zone "$GCE_ZONE" --container-image=gcr.io/"$PROJECT_ID"/"$IMAGE"
+        gcloud compute instances update-container $GCE_CLUSTER --zone $GCE_ZONE --container-image=gcr.io/$PROJECT_ID/$IMAGE
