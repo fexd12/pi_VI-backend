@@ -1,0 +1,58 @@
+# This workflow will build a docker container, publish it to Google Container Registry, and deploy it to GKE when a release is created
+#
+# To configure this workflow:
+#
+# 1. Ensure that your repository contains the necessary configuration for your Google Kubernetes Engine cluster, including deployment.yml, kustomization.yml, service.yml, etc.
+#
+# 2. Set up secrets in your workspace: GKE_PROJECT with the name of the project and GKE_SA_KEY with the Base64 encoded JSON service account key (https://github.com/GoogleCloudPlatform/github-actions/tree/docs/service-account-key/setup-gcloud#inputs).
+#
+# 3. Change the values for the GKE_ZONE, GKE_CLUSTER, IMAGE, and DEPLOYMENT_NAME environment variables (below).
+#
+# For more support on how to run the workflow, please visit https://github.com/GoogleCloudPlatform/github-actions/tree/master/example-workflows/gke
+
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches: [master]
+
+env:
+  PROJECT_ID: ${{ secrets.GCE_PROJECT }}
+  GCE_CLUSTER: instance-4    # TODO: update to cluster name
+  GCE_ZONE: us-central1-a   # TODO: update to cluster zone
+  IMAGE: pivi-backend
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GCE_SA_KEY }}
+        project_id: ${{ secrets.GCE_PROJECT }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    - run: |-
+        gcloud --quiet auth configure-docker
+        
+#     - run: |-
+#         docker build \
+#           --tag "gcr.io/$PROJECT_ID/$IMAGE" \
+#           --build-arg GITHUB_SHA="$GITHUB_SHA" \
+#           --build-arg GITHUB_REF="$GITHUB_REF" \
+#           .
+          
+    
+#     # helper for authentication
+#     - run: |-
+#         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+    - run: |-
+        gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE .
+
+    # Get the GKE credentials so we can deploy to the cluster
+    - run: |-
+        gcloud compute instances update-container $GCE_CLUSTER --zone $GCE_ZONE --container-image=gcr.io/$PROJECT_ID/$IMAGE
