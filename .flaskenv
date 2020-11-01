@@ -1,3 +1,3 @@
 FLASK_APP=pi.py
 FLASK_RUN_PORT=2000
-FLASK_ENV=production
+FLASK_ENV=development

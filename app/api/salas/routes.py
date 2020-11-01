@@ -1,13 +1,14 @@
+from setuptools.unicode_utils import try_encode
 from .form import Form
 from . import bp
 from app.erros import bad_request
 from app import cross_origin,db
 from flask import jsonify,request,render_template,redirect
 from app.authenticate import check_token_dec
-from app.models import Salas,SalasTipo
+from app.models import Salas,SalasTipo,SalasStatus
 import json
 from sqlalchemy import text
-
+from datetime import date
 
 @bp.route('/tipo/',methods=['GET'])
 @check_token_dec
@@ -58,6 +59,15 @@ def new_sala():
         sala.from_dict(data)
 
         db.session.add(sala)
+        db.session.commit()
+        data_sala = {
+            'sala_id':sala.id_sala
+        }
+
+        sala_status =  SalasStatus()
+        sala_status.from_dict(data_sala)
+
+        db.session.add(sala_status)
         db.session.commit()
 
         return jsonify({
@@ -112,11 +122,30 @@ def teste():
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
 
-@bp.route('/disponivel',methods=['GET'])
+@bp.route('/alugada',methods=['GET'])
 @check_token_dec
-def sala_disponivel():
-    agend = S.query.filter(S.ativo == S) \
-        .all()
+def sala_alugada():
+    try:
+        data = date.today()
+        with db.engine.connect() as conn:
+            query = text("""
+                select DISTINCT COUNT(s.id_sala) from agendamento as a
+	                join salas as s on 
+		                a.sala_id = s.id_sala
+	                where a.data = :data_atual
+            """)
+            
+            result = conn.execute(query,data_atual=data).fetchall()
+        
+        message ={
+            'salas' : result[0][0]
+        }
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'não foi possivel realizar a consulta')
 
 @bp.route('/feedback',methods=['GET','POST'])
 @cross_origin()
@@ -138,4 +167,73 @@ def feedback():
 #     # luzes = request.form['luzes']
 #     print(name)
 #     return jsonify('teste'),200 # tela para informar sucesso do cadastro
-    
+
+@bp.route('/manutencao',methods=['GET'])
+@cross_origin()
+@check_token_dec
+def salass_manutencao():
+    try:
+        data = date.today()
+        with db.engine.connect() as conn:
+            query = text("""
+                select distinct count(sala_id)
+	                from sala_status 
+		                where ar = '1' or projetor = '1' or luzes = '1' or ar = '1'
+            """)
+            
+            result = conn.execute(query,data_atual=data).fetchall()
+        
+        message ={
+            'salas' : result[0][0]
+        }
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'não foi possivel realizar a consulta')
+
+@bp.route('/status',methods=['GET'])
+@cross_origin()
+def status_sala():
+    try:
+        with db.engine.connect() as conn:
+            query = text("""
+                select salas.id_sala,salas.numero,sala_status.projetor,sala_status.luzes,sala_status.ar
+	                from sala_status
+	                join salas on
+		                sala_status.sala_id = salas.id_sala
+		            where sala_status.ar = '1' or sala_status.projetor = '1' or sala_status.luzes = '1' or sala_status.ar = '1'
+
+            """)
+        
+            result = conn.execute(query).fetchall()
+
+        message ={
+            'salas' : [{column: value for column, value in rowproxy.items()} for rowproxy in result]
+        }
+
+        print(message)
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'não foi possivel realizar a consulta')
+
+@bp.route('/disponivel',methods=['GET'])
+@cross_origin()
+@check_token_dec
+def sala_disponivel():
+    try:
+        salas = Salas.query.count()
+
+        message ={
+            'salas' : salas
+        }
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'não foi possivel realizar a consulta')
