@@ -193,9 +193,10 @@ def salass_manutencao():
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
 
-@bp.route('/status',methods=['GET'])
+@bp.route('/status_manutencao',methods=['GET'])
 @cross_origin()
-def status_sala():
+@check_token_dec
+def status_sala_manutencao():
     try:
         with db.engine.connect() as conn:
             query = text("""
