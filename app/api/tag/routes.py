@@ -62,8 +62,8 @@ def agendamento(tag):
 
     for row in agendamento:
         horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1])
-        print(horas_resultado.time( ))
-        print(hora_atual)
+        # print(horas_resultado.time( ))
+        # print(hora_atual)
 
         if row[3] == 1:
             horas_delta = horas_resultado - datetime.timedelta(minutes=15)
@@ -87,7 +87,7 @@ def agendamento(tag):
             pass
 
 
-    print(items)
+    # print(items)
     message = {
         'items': items
     }

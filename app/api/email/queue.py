@@ -6,7 +6,7 @@ from threading import Thread
 
 def send_mail(mail,msg):
     try:
-        print('email')
+        # print('email')
         server = smtplib.SMTP(current_app.config['MAIL_SERVER'],current_app.config['MAIL_PORT'])
         server.starttls()
         server.login(current_app.config['MAIL_USERNAME'],current_app.config['MAIL_PASSWORD'])

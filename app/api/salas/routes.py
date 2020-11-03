@@ -1,3 +1,4 @@
+from warnings import resetwarnings
 from setuptools.unicode_utils import try_encode
 from .form import Form
 from . import bp
@@ -115,7 +116,7 @@ def teste():
         message = {
             'items': items
         }
-        print(message)
+        # print(message)
         return jsonify(message),200
 
     except Exception as e:
@@ -214,7 +215,7 @@ def status_sala_manutencao():
             'salas' : [{column: value for column, value in rowproxy.items()} for rowproxy in result]
         }
 
-        print(message)
+        # print(message)
 
         return jsonify(message),200
 
@@ -238,3 +239,31 @@ def sala_disponivel():
     except Exception as e:
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
+
+@bp.route('/sala_manutencao', methods=['PUT'])
+@cross_origin()
+@check_token_dec
+def sala_manutencao():
+    try:
+        dados = request.get_json()
+
+        sala_padrao = {
+            'ar':0,
+            'luzes':0,
+            'projetor':0
+        }
+    
+        status_sala = SalasStatus.query.filter_by(sala_id = dados['id_sala']).first()
+        status_sala.from_dict(sala_padrao)
+        
+        db.session.commit()
+        
+        message = {
+            'message' : 'Atualização feita com sucesso'
+        }
+        
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'Não foi possivel realizar a atualização')
