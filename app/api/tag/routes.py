@@ -46,7 +46,7 @@ def agendamento(tag):
 
     try:
         
-        data = datetime.datetime.today()
+        data = datetime.datetime.today() - datetime.timedelta(hours=3)
         hora  = str(data.hour) + ':' + str(data.minute) + ':' + '00'
         hora_atual = datetime.time(hour=data.hour,minute=data.minute,second=0)
 
@@ -56,7 +56,6 @@ def agendamento(tag):
             .add_columns(Usuario.id_usuario,Tag.id_tag,Usuario.funcao_id) \
             .filter(Tag.tag == tag) \
             .first()
-
         agendamento = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
             .join(Tag,Tag.id_tag == Usuario.tag_id)\
             .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Agendamento.id_agendamento)\
@@ -70,7 +69,7 @@ def agendamento(tag):
             horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1])
             # print(horas_resultado.time( ))
             # print(hora_atual)
-            print(row)
+            # print(row)
             if usuario[3] == 1:
                 horas_delta = horas_resultado - datetime.timedelta(minutes=15)
                 if hora_atual == horas_delta.time() or hora_atual <= row[2]:
@@ -79,7 +78,7 @@ def agendamento(tag):
                         'horario_inicio': str(horas_delta.time()),
                         'horario_final': str(row[2]),
                         'acesso' : 1,
-                        'id_agendamento' : str(row[4])
+                        'id_agendamento' : str(row[3])
                     })
 
             elif usuario[3] == 2:
@@ -90,7 +89,7 @@ def agendamento(tag):
                         'horario_inicio': str(horas_delta.time()),
                         'horario_final': str(row[2]),
                         'acesso' : 0,
-                        'id_agendamento' : str(row[4])
+                        'id_agendamento' : str(row[3])
                     })
             
             elif usuario[3] == 3:
@@ -98,7 +97,7 @@ def agendamento(tag):
                     'acesso': 3
                 })
 
-        print(items)
+        # print(items)
         message = {
             'items': items
         }

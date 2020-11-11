@@ -6,10 +6,10 @@ csrf = CSRFProtect()
 
 class FormSalas(FlaskForm):
 
-    projetor = RadioField('Status do projetor',choices=[(1,'Bom'),(0,'Ruim')])
-    # computador = RadioField('Status do computador',choices=[('bom','Bom'),('ruim','Ruim')],validators=[DataRequired()])
-    luzes = RadioField('Status das luzes',choices=[(1,'Bom'),(0,'Ruim')])
-    ar = RadioField('Status do Ar-Condicionado',choices=[(1,'Bom'),(0,'Ruim')])
+    projetor = RadioField('Status do projetor',choices=[(0,'Bom'),(1,'Ruim')])
+    # computador = RadioField('Status do computador',choices=[(0,'Bom'),(1,'Ruim')],validators=[DataRequired()])
+    luzes = RadioField('Status das luzes',choices=[(0,'Bom'),(1,'Ruim')])
+    ar = RadioField('Status do Ar-Condicionado',choices=[(0,'Bom'),(1,'Ruim')])
     
     def insert_data(self,sala_status):
 
