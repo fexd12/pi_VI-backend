@@ -59,8 +59,7 @@ def agendamento(tag):
 
         agendamento = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
             .join(Tag,Tag.id_tag == Usuario.tag_id)\
-            .join(Funcao,Funcao.id_funcao == Usuario.funcao_id) \
-            .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Funcao.id_funcao)\
+            .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Agendamento.id_agendamento)\
             .filter(Usuario.id_usuario == usuario[1],Agendamento.data == data_atual)\
             .all()
         
@@ -79,7 +78,8 @@ def agendamento(tag):
                     items.append({
                         'horario_inicio': str(horas_delta.time()),
                         'horario_final': str(row[2]),
-                        'acesso' : 1
+                        'acesso' : 1,
+                        'id_agendamento' : str(row[4])
                     })
 
             elif usuario[3] == 2:
@@ -89,12 +89,13 @@ def agendamento(tag):
                     items.append({
                         'horario_inicio': str(horas_delta.time()),
                         'horario_final': str(row[2]),
-                        'acesso' : 0
+                        'acesso' : 0,
+                        'id_agendamento' : str(row[4])
                     })
             
             elif usuario[3] == 3:
                 items.append({
-                    'acesso': 3 
+                    'acesso': 3
                 })
 
         print(items)

@@ -1,3 +1,4 @@
+from app.models import Agendamento,Usuario
 from . import bp
 from . import mail as m
 from . import queue
@@ -24,10 +25,14 @@ def enviar_email():
                 link: www.uol.com.br
             """
         elif data['cadastro'] == 0:
+            sala_agendada = Agendamento.query.filter_by(id_agendamento = data['id_agendamento']).first()
+
+            user = Usuario.query.filter_by(id_usuario = sala_agendada.usuario_id).first()
+            data['email'] = user.email
             subject = 'Feedback aula'
             body = f"""
                 Segue link do Formulario para nos contar como estava a sala apos a aula
-                link: localhost:2000/salas/feedback
+                link: {current_app.config['HOST'] + '/salas/feedback/' + str(sala_agendada.uuid)}
             """
         elif data['cadastro'] == 2:
             subject = 'Alteração de senha'

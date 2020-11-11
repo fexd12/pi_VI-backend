@@ -1,12 +1,10 @@
-from warnings import resetwarnings
-from setuptools.unicode_utils import try_encode
-from .form import Form
+from .form import FormSalas
 from . import bp
 from app.erros import bad_request
 from app import cross_origin,db
-from flask import jsonify,request,render_template,redirect
+from flask import jsonify,request,render_template,redirect,url_for
 from app.authenticate import check_token_dec
-from app.models import Salas,SalasTipo,SalasStatus
+from app.models import Salas,SalasTipo,SalasStatus,Agendamento,Usuario
 import json
 from sqlalchemy import text
 from datetime import date
@@ -148,26 +146,30 @@ def sala_alugada():
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
 
-@bp.route('/feedback',methods=['GET','POST'])
+@bp.route('/feedback/<uuid>/',methods=['GET','POST'])
 @cross_origin()
-def feedback():
-    form = Form()
+def feedback(uuid):
+    form = FormSalas()
+    sala_agendada = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
+        .join(Salas,Salas.id_sala == Agendamento.sala_id) \
+        .add_columns(Usuario.nome,Usuario.email,Agendamento.sala_id,Salas.numero) \
+        .filter(Agendamento.uuid == str(uuid)) \
+        .first()
+
     if form.validate_on_submit():
-        #enviar resposta ao banco 
-        #request.form
-
-        return render_template('success.html') # tela para informar sucesso do cadastro
+        sala_status = SalasStatus.query.filter_by(sala_id = sala_agendada.sala_id).first()
+        form.populate_obj(sala_status)
+        db.session.add(sala_status)
+        db.session.commit()
         
-    return render_template('formulario.html',form=form),200
+        return redirect(url_for('.success')) # tela para informar sucesso do cadastro
+        
+    return render_template('formulario.html',form=form,usuarios = sala_agendada,id = uuid)
 
-# @bp.route('/teste_feedback',methods=['POST'])
-# @cross_origin()
-# def teste_feedback():
-#     # print('teste')
-#     name = request.form['projetor']
-#     # luzes = request.form['luzes']
-#     print(name)
-#     return jsonify('teste'),200 # tela para informar sucesso do cadastro
+@bp.route('/success',methods=['GET'])
+@cross_origin()
+def success():
+    return render_template('success.html') # tela para informar sucesso do cadastro
 
 @bp.route('/manutencao',methods=['GET'])
 @cross_origin()
