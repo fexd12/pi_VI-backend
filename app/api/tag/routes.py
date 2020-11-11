@@ -1,5 +1,4 @@
 from datetime import date
-from re import T
 from app.models.usuario import Usuario
 from . import bp
 from app.authenticate import check_token_dec
@@ -45,51 +44,65 @@ def new_tag():
 @bp.route('/agendamento/<string:tag>/',methods=['GET'])
 def agendamento(tag):
 
-    data = datetime.datetime.today()
-    hora  = str(data.hour) + ':' + str(data.minute) + ':' + '00'
-    hora_atual = datetime.time(hour=data.hour,minute=data.minute,second=0)
-
-    data_atual = str(data.year) + '-' + str(data.month) + '-' + str(data.day)
-
-    agendamento = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
-        .join(Tag,Tag.id_tag == Usuario.tag_id)\
-        .join(Funcao,Funcao.id_funcao == Usuario.funcao_id) \
-        .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Funcao.descricao)\
-        .filter(Tag.tag == tag,Agendamento.data == data_atual)\
-        .all()
-    
-    items = []
-
-    for row in agendamento:
-        horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1])
-        # print(horas_resultado.time( ))
-        # print(hora_atual)
-
-        if row[3] == 1:
-            horas_delta = horas_resultado - datetime.timedelta(minutes=15)
-            if hora_atual == horas_delta.time() or hora_atual <= row[2]:
-                
-                items.append({
-                    'horario_inicio': str(horas_delta.time()),
-                    'horario_final': str(row[2]),
-                })
-
-        elif row[3] == 2:
-            horas_delta = horas_resultado - datetime.timedelta(minutes=20)
-            if hora_atual == horas_delta.time() or hora_atual <= row[1]:
-                
-                items.append({
-                    'horario_inicio': str(horas_delta.time()),
-                    'horario_final': str(row[2]),
-                })
+    try:
         
-        elif row[4] == 3:
-            pass
+        data = datetime.datetime.today()
+        hora  = str(data.hour) + ':' + str(data.minute) + ':' + '00'
+        hora_atual = datetime.time(hour=data.hour,minute=data.minute,second=0)
 
+        data_atual = str(data.year) + '-' + str(data.month) + '-' + str(data.day)
 
-    # print(items)
-    message = {
-        'items': items
-    }
+        usuario = Usuario.query.join(Tag,Tag.id_tag == Usuario.tag_id)\
+            .add_columns(Usuario.id_usuario,Tag.id_tag,Usuario.funcao_id) \
+            .filter(Tag.tag == tag) \
+            .first()
 
-    return jsonify(message),200
+        agendamento = Agendamento.query.join(Usuario,Usuario.id_usuario == Agendamento.usuario_id) \
+            .join(Tag,Tag.id_tag == Usuario.tag_id)\
+            .join(Funcao,Funcao.id_funcao == Usuario.funcao_id) \
+            .add_columns(Agendamento.horario_inicio,Agendamento.horario_final,Funcao.id_funcao)\
+            .filter(Usuario.id_usuario == usuario[1],Agendamento.data == data_atual)\
+            .all()
+        
+        items = []
+        print(agendamento)
+
+        for row in agendamento:
+            horas_resultado = datetime.datetime.combine(datetime.date.today(),row[1])
+            # print(horas_resultado.time( ))
+            # print(hora_atual)
+            print(row)
+            if usuario[3] == 1:
+                horas_delta = horas_resultado - datetime.timedelta(minutes=15)
+                if hora_atual == horas_delta.time() or hora_atual <= row[2]:
+                    
+                    items.append({
+                        'horario_inicio': str(horas_delta.time()),
+                        'horario_final': str(row[2]),
+                        'acesso' : 1
+                    })
+
+            elif usuario[3] == 2:
+                horas_delta = horas_resultado - datetime.timedelta(minutes=20)
+                if hora_atual == horas_delta.time() or hora_atual <= row[1]:
+                    
+                    items.append({
+                        'horario_inicio': str(horas_delta.time()),
+                        'horario_final': str(row[2]),
+                        'acesso' : 0
+                    })
+            
+            elif usuario[3] == 3:
+                items.append({
+                    'acesso': 3 
+                })
+
+        print(items)
+        message = {
+            'items': items
+        }
+
+        return jsonify(message),200
+    except Exception as e:
+        print(e)
+        return bad_request(403,'nao foi possivel trazer o agendamento')
