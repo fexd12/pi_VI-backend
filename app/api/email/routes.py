@@ -38,6 +38,11 @@ def enviar_email():
                 Pedimos por gentileza para trocar sua senha no seu primeiro acesso.
                 Ir na are de perfil para trocar sua senha
             """
+        elif data['cadastro'] == 3:
+            subject = 'Alteração de senha'
+            body = f"""
+                Sua senha foi alterada com sucesso
+            """
         # d = m.Mail(data['email'],body,subject)
         # d.enviar()
         # queue.queue(d.email,d.msg)
