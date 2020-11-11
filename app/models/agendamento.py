@@ -6,6 +6,7 @@ class Agendamento(db.Model):
     data = db.Column(db.Date)
     horario_inicio = db.Column(db.Time)
     horario_final = db.Column(db.Time)
+    uuid = db.Column(db.Text)
 
     sala_id = db.Column(db.Integer, db.ForeignKey('salas.id_sala'),
         nullable=False)
@@ -19,12 +20,13 @@ class Agendamento(db.Model):
             'horario_inicio':str(self.horario_inicio),
             'horario_final': str(self.horario_final),
             'sala_id': self.sala_id,
-            'usuario_id': self.usuario_id
+            'usuario_id': self.usuario_id,
+            'uuid':self.uuid
         }
         return data
 
     def from_dict(self,data):
-        for field in ['data','horario_inicio','horario_final','sala_id','usuario_id']:
+        for field in ['data','horario_inicio','horario_final','sala_id','usuario_id','uuid']:
             if field in data:
                 setattr(self,field,data[field])
         
