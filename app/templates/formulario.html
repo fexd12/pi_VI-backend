@@ -1,3 +1,5 @@
+{% from "macros.html" import render_field %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -11,41 +13,33 @@
     <div class="img">
         <img src="{{ url_for('static', filename='logo1.png') }}" alt="Logo">
     </div>
-    <form class="formulario" action="{{url_for('salas.feedback')}}" method="POST">
+    <form class="formulario" action="{{url_for('salas.feedback',uuid=id)}}" method="POST">
         <p> Preencha essa formulário para informações da sala!</p>
 
         <div class="field">
             <label for="Name">Seu Nome:</label>
-            <input value='felipe' type="text" id="Name" name="Name" disabled> </input>
+            <label for="">{{usuarios.nome}}</label>
+            <!-- <input value='felipe' type="text" id="Name" name="Name" disabled> </input> -->
         </div>
 
         <div class="field">
             <label for="email">Seu E-Mail:</label>
-            <input value="teste" type="email" id="email" name="email" disabled> </input>
+            <label for="">{{usuarios.email}}</label>
+            <!-- <input value="teste" type="email" id="email" name="email" disabled> </input> -->
         </div>
 
         <div class="field">
             <label for="telefone">ID da Sala:</label>
-            <input value="dasd220" type="text" id="telefone" name="telefone" disabled> </input>
+            <label for="">{{usuarios.numero}}</label>
+            <!-- <input value="dasd220" type="text" id="telefone" name="telefone" disabled> </input> -->
         </div>
 
-        <div class="field radiobox">
-            {{form.projetor.label}} {{form.projetor}}
-
+        {{ form.csrf_token }}
+        {% for field in form if field.name != "csrf_token" %}
+        <div class="form-group">
+            {{ render_field(field, type='text') }}
         </div>
-
-        <div class="field radiobox">
-
-            {{ form.computador.label }} {{ form.computador }}
-        </div>
-
-        <div class="field radiobox">
-            {{ form.luzes.label }} {{ form.luzes }}
-        </div>
-
-        <div class="field radiobox">
-            {{ form.ar.label }} {{ form.ar }}
-        </div>
+        {% endfor %}
 
         <input type="submit" value="Submit"></input>
     </form>
