@@ -6,8 +6,8 @@ from app.models import Agendamento as A
 from app.models import Salas as S
 from app.models import SalasTipo as ST
 from app.erros import bad_request
-
 from datetime import date
+import uuid
 
 dia = date.today()
 
@@ -61,6 +61,7 @@ def set_agendamento():
         user_id = verify_token['id_user']
 
         data['usuario_id'] = user_id
+        data['uuid'] = uuid.uuid4()
 
         agend = A()
         agend.from_dict(data)
