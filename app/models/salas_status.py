@@ -9,6 +9,7 @@ class SalasStatus(db.Model):
     projetor = db.Column(db.Text)
     luzes = db.Column(db.Text)
     ar = db.Column(db.Text)
+    limpeza  = db.Column(db.Text)
 
     def __repr__(self):
         return "<SalasStatus {}>".format(self.sala_status_id)
@@ -19,11 +20,12 @@ class SalasStatus(db.Model):
             'sala_id':self.sala_id,
             'projetor':self.projetor,
             'luzes':self.luzes,
-            'ar':self.ar
+            'ar':self.ar,
+            'limpeza': self.limpeza
         }
         return data
     
     def from_dict(self,data):
-        for field in ['sala_id','projetor','luzes','ar']:
+        for field in ['sala_id','projetor','luzes','ar','limpeza']:
             if field in data:
                 setattr(self,field,data[field])
