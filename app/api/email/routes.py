@@ -1,10 +1,10 @@
-from app.models import Agendamento,Usuario
+from app.models import Agendamento,Usuario,SalasStatus
 from . import bp
 from . import mail as m
 from . import queue
 from flask import jsonify,request,current_app
 from app.erros import bad_request
-from app import cross_origin
+from app import cross_origin,db
 from app.authenticate import check_token_dec
 from flask_mail import Message
 
@@ -29,6 +29,12 @@ def enviar_email():
 
             user = Usuario.query.filter_by(id_usuario = sala_agendada.usuario_id).first()
             data['email'] = user.email
+
+            sala_status = SalasStatus.query.filter_by(sala_id = sala_agendada.sala_id).first()
+            sala_status.limpeza = 1
+            db.session.add(sala_status)
+            db.session.commit()
+
             subject = 'Feedback aula'
             body = f"""
                 Segue link do Formulario para nos contar como estava a sala apos a aula
