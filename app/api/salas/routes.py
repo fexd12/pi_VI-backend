@@ -225,6 +225,34 @@ def status_sala_manutencao():
         print(e)
         return bad_request(403,'não foi possivel realizar a consulta')
 
+@bp.route('/status_limpeza',methods=['GET'])
+@cross_origin()
+@check_token_dec
+def status_sala_limpeza():
+    try:
+        with db.engine.connect() as conn:
+            query = text("""
+                select salas.id_sala as sala_id,salas.numero,sala_status.limpeza as limpa
+	                from sala_status
+	                join salas on
+		                sala_status.sala_id = salas.id_sala
+		            where sala_status.limpeza = '1'
+            """)
+        
+            result = conn.execute(query).fetchall()
+
+        message = {
+            'salas' : [{column: value for column, value in rowproxy.items()} for rowproxy in result]
+        }
+
+        # print(message)
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'não foi possivel realizar a consulta')
+
 @bp.route('/disponivel',methods=['GET'])
 @cross_origin()
 @check_token_dec
@@ -269,3 +297,48 @@ def sala_manutencao():
     except Exception as e:
         print(e)
         return bad_request(403,'Não foi possivel realizar a atualização')
+
+
+@bp.route('/sala_limpeza', methods=['PUT'])
+@cross_origin()
+@check_token_dec
+def sala_limpeza():
+    try:
+        dados = request.get_json()
+
+        sala_padrao = {
+            'limpeza':0,
+        }
+    
+        status_sala = SalasStatus.query.filter_by(sala_id = dados['sala_id']).first()
+        status_sala.from_dict(sala_padrao)
+        
+        db.session.commit()
+        
+        message = {
+            'message' : 'Atualização feita com sucesso'
+        }
+        
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'Não foi possivel realizar a atualização')
+
+@bp.route('/limpeza', methods=['GET'])
+@check_token_dec
+def func_limpeza():
+    try:
+        
+        salas = SalasStatus.query.filter(SalasStatus.limpeza == '1') \
+        .count()
+
+        message = { 
+            'salas': salas
+        }
+
+        return jsonify(message),200
+
+    except Exception as e:
+        print(e)
+        return bad_request(403,'Não foi possivel encontrar usuário')
