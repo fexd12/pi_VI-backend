@@ -215,25 +215,6 @@ def reset_pass():
     }),200
 
 
-@bp.route('/limpeza', methods=['GET'])
-@check_token_dec
-def func_limpeza():
-    try:
-        
-        users = Usuario.query.join(Funcao,Usuario.funcao_id == Funcao.id_funcao)\
-        .add_columns(Usuario.id_usuario)\
-        .filter(Funcao.descricao == "Limpeza")\
-        .count()
-
-        message = { 
-            'usuario': users
-        }
-
-        return jsonify(message),200
-
-    except Exception:
-        return bad_request(403,'Não foi possivel encontrar usuário')
-
 @bp.route('/all', methods=['GET'])
 @check_token_dec
 def func_all():
