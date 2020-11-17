@@ -132,7 +132,7 @@ def sala_alugada():
         data = date.today()
         with db.engine.connect() as conn:
             query = text("""
-                select DISTINCT COUNT(s.id_sala) from agendamento as a
+                select DISTINCT COUNT(a.id_agendamento) from agendamento as a
 	                join salas as s on 
 		                a.sala_id = s.id_sala
 	                where a.data = :data_atual
