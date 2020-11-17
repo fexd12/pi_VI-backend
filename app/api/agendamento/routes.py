@@ -6,7 +6,7 @@ from app.models import Agendamento as A
 from app.models import Salas as S
 from app.models import SalasTipo as ST
 from app.erros import bad_request
-from datetime import date
+from datetime import date,timedelta
 import uuid
 
 dia = date.today()
@@ -19,11 +19,11 @@ def get_agendamento():
         token = request.headers.get('x-access-token')
         verify_token = decode_token(token)
         user_id = verify_token['id_user']
-
+        dia_futuro = dia + timedelta(days=7)
         agend = A.query.join(S,S.id_sala == A.sala_id ) \
             .join(ST,ST.sala_tipo_id == S.sala_tipo_id) \
             .add_columns(A.id_agendamento, A.data, A.horario_inicio, A.horario_final, S.id_sala, S.numero, ST.descricao) \
-            .filter(A.usuario_id == user_id,A.data == dia) \
+            .filter(A.usuario_id == user_id,A.data.between(dia,dia_futuro)) \
             .all()
 
         items = []
