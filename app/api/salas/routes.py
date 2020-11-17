@@ -95,7 +95,7 @@ def teste():
                 where not exists (select *
                     from agendamento t2
                         where t1.id_sala = t2.sala_id and
-                        (t2.data = CURRENT_DATE) and not (t2.horario_inicio between :horario_inicio and :horario_final) and not
+                        (t2.data = :data) and not (t2.horario_inicio between :horario_inicio and :horario_final) and not
                         (t2.horario_final between :horario_inicio and :horario_final) ) and t1.sala_tipo_id = :sala_tipo_id and not exists (
                 select t1.id_sala,t1.numero,t4.projetor,t4.luzes,t4.ar,t4.limpeza
 	                from sala_status t4
