@@ -5,6 +5,7 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Formulário PI-VI</title>
     <link rel="shortcut icon" type="imagem/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
 </head>
@@ -129,10 +130,20 @@
         background-color: #74EBD5;
         background-image: linear-gradient(270deg, #74EBD5 0%, #9FACE6 100%);
     }
-    
-    .img {
-        position: absolute;
-        width: 100px;
-        height: 100px;
+
+    @media(min-width:min-content) {
+
+        .img{
+            display: none;
+        }
+    }
+
+    @media(max-width:max-content) {
+
+        .img {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+        }
     }
 </style>
